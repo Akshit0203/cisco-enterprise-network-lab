@@ -10,7 +10,7 @@
 ![License](https://img.shields.io/badge/License-MIT-green)
 
 <p align="center">
-  <img src="media/rack/03-console-session-live.jpg" alt="Live PuTTY console session against the Cisco rack" width="80%">
+  <img src="media/rack/03-console-session-live.jpg" alt="Live PuTTY console session against the Cisco rack" width="60%">
   <br>
   <em>Live console session — configuring the Cisco 2811 over serial (PuTTY) against CRAW Rack 1.</em>
 </p>
