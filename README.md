@@ -87,7 +87,7 @@ Full addressing plan: [`docs/03-ip-addressing-scheme.md`](docs/03-ip-addressing-
 Topology diagram: [`diagrams/topology.md`](diagrams/topology.md)
 
 <p align="center">
-  <img src="media/rack/01-craw-rack1-router-interface-labels.jpg" alt="Router interface IP labels on CRAW Rack 1" width="70%">
+  <img src="media/rack/01-craw-rack1-router-interface-labels.jpg" alt="Router interface IP labels on CRAW Rack 1" width="70%"  height="70%">
   <br>
   <em>Source of the addressing plan — physical interface labels on Router 1 and Router 2.</em>
 </p>
@@ -134,8 +134,8 @@ Live console captures and physical rack photos are in [`media/`](media/):
 - **`media/rack/`** — the physical rack (CRAW Rack 1), interface labels, and the live console session
 
 <p align="center">
-  <img src="media/console/01-router-boot-ios-version.png" alt="Cisco 2811 boot output and IOS version" width="78%">
-  <img src="media/console/03-interface-ip-configuration.png" alt="Interface IP configuration and show ip interface brief output" width="78%">
+  <img src="media/console/01-router-boot-ios-version.png" alt="Cisco 2811 boot output and IOS version" width="90%">
+  <img src="media/console/03-interface-ip-configuration.png" alt="Interface IP configuration and show ip interface brief output" width="90%">
   <br>
   <em>Left: Cisco 2811 boot output — IOS 12.4(15)T13. &nbsp; Right: interface addressing and <code>show ip interface brief</code>.</em>
 </p>
