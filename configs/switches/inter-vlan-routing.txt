@@ -1,0 +1,55 @@
+!==============================================================================
+! Feature     : Inter-VLAN Routing (Router-on-a-Stick)
+! Device      : Cisco 2811 router + 802.1Q trunk to switch
+! Purpose      : Route traffic between VLANs over a single physical link using
+!               tagged sub-interfaces.
+!------------------------------------------------------------------------------
+! Lab reference configuration — CRAW Rack 1
+!==============================================================================
+
+enable
+configure terminal
+
+! --- Physical interface: no IP, just bring it up to carry the trunk ---
+interface FastEthernet0/0
+ description TRUNK to SW1 (802.1Q) :: inter-VLAN routing
+ no ip address
+ no shutdown
+exit
+
+! --- Sub-interface for VLAN 10 (STAFF) ---
+interface FastEthernet0/0.10
+ description Gateway for VLAN 10 STAFF
+ encapsulation dot1Q 10
+ ip address 10.0.0.2 255.0.0.0
+exit
+
+! --- Sub-interface for VLAN 20 (SERVERS) ---
+interface FastEthernet0/0.20
+ description Gateway for VLAN 20 SERVERS
+ encapsulation dot1Q 20
+ ip address 20.0.0.2 255.0.0.0
+exit
+
+! --- Sub-interface for VLAN 99 (MGMT) ---
+interface FastEthernet0/0.99
+ description Gateway for VLAN 99 MGMT
+ encapsulation dot1Q 99
+ ip address 30.0.0.1 255.0.0.0
+exit
+
+end
+copy running-config startup-config
+
+!==============================================================================
+! How it works
+!   - The switch port facing the router is a dot1q TRUNK.
+!   - Each router sub-interface terminates one VLAN and acts as that VLAN's
+!     default gateway.
+!   - Traffic between VLANs is routed by the router across the single trunk.
+!
+! Verification
+!   show ip route
+!   show vlans                      ! 802.1Q sub-interface stats
+!   ping <host in another VLAN>
+!==============================================================================

@@ -1,0 +1,63 @@
+!==============================================================================
+! Service     : DHCP Server (Cisco IOS)
+! Device      : Router (Cisco 2811)
+! Purpose     : Automatic IP address allocation for client PCs per segment
+!------------------------------------------------------------------------------
+! Lab reference configuration — CRAW Rack 1
+!==============================================================================
+
+enable
+configure terminal
+
+! --- Exclude infrastructure addresses from being leased ---
+ip dhcp excluded-address 10.0.0.1 10.0.0.9
+ip dhcp excluded-address 20.0.0.1 20.0.0.9
+ip dhcp excluded-address 30.0.0.1 30.0.0.9
+ip dhcp excluded-address 40.0.0.1 40.0.0.9
+
+! --- Pool for LAN A (10.0.0.0/8) ---
+ip dhcp pool LAN-A
+ network 10.0.0.0 255.0.0.0
+ default-router 10.0.0.2
+ dns-server 10.0.0.5
+ domain-name lab.local
+ lease 0 8 0                        ! 8 hours
+exit
+
+! --- Pool for LAN B (20.0.0.0/8) ---
+ip dhcp pool LAN-B
+ network 20.0.0.0 255.0.0.0
+ default-router 20.0.0.2
+ dns-server 10.0.0.5
+ domain-name lab.local
+ lease 0 8 0
+exit
+
+! --- Pool for LAN C (30.0.0.0/8) ---
+ip dhcp pool LAN-C
+ network 30.0.0.0 255.0.0.0
+ default-router 30.0.0.1
+ dns-server 10.0.0.5
+ domain-name lab.local
+ lease 0 8 0
+exit
+
+! --- Pool for LAN D (40.0.0.0/8) ---
+ip dhcp pool LAN-D
+ network 40.0.0.0 255.0.0.0
+ default-router 40.0.0.1
+ dns-server 10.0.0.5
+ domain-name lab.local
+ lease 0 8 0
+exit
+
+end
+copy running-config startup-config
+
+!==============================================================================
+! Verification
+!   show ip dhcp pool               ! configured pools & utilization
+!   show ip dhcp binding            ! leases assigned to clients
+!   show ip dhcp conflict           ! duplicate-address conflicts
+!   (on a client PC)  ipconfig /renew   /   dhclient
+!==============================================================================

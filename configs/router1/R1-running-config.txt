@@ -1,0 +1,53 @@
+!==============================================================================
+! Device      : Router 1 (R1)
+! Platform    : Cisco 2811 ISR
+! IOS         : 12.4(15)T13  (C2800NM-IPBASE-M)
+! Role        : Gateway for LAN A (10.0.0.0/8) and LAN C (30.0.0.0/8)
+! Access      : Console (serial / PuTTY, 9600 8N1)
+!------------------------------------------------------------------------------
+! Lab reference configuration — CRAW Rack 1
+!==============================================================================
+
+enable
+configure terminal
+
+! --- Basic device identity ---
+hostname R1
+no ip domain-lookup                 ! avoid DNS lookups on mistyped commands
+
+! --- Console & log housekeeping ---
+line console 0
+ logging synchronous                ! keep log messages from breaking CLI input
+ exec-timeout 10 0
+exit
+
+! --- Interface: FastEthernet0/0  ->  LAN A (10.0.0.0/8) ---
+interface FastEthernet0/0
+ description LAN-A :: 10.0.0.0/8
+ ip address 10.0.0.2 255.0.0.0
+ no shutdown
+exit
+
+! --- Interface: FastEthernet0/1  ->  LAN C (30.0.0.0/8) ---
+interface FastEthernet0/1
+ description LAN-C :: 30.0.0.0/8
+ ip address 30.0.0.1 255.0.0.0
+ no shutdown
+exit
+
+! --- Static routing to R2's networks (20.0.0.0/8 and 40.0.0.0/8) ---
+! Next hop is R2 across the shared segment. Adjust next-hop to match the
+! inter-router link addressing used in your build.
+ip route 20.0.0.0 255.0.0.0 10.0.0.2
+ip route 40.0.0.0 255.0.0.0 10.0.0.2
+
+! --- Save configuration ---
+end
+copy running-config startup-config
+
+!==============================================================================
+! Verification
+!   show ip interface brief
+!   show ip route
+!   ping 30.0.0.1
+!==============================================================================

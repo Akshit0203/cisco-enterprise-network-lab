@@ -1,0 +1,19 @@
+# OS / editor cruft
+.DS_Store
+Thumbs.db
+desktop.ini
+*~
+*.swp
+.vscode/
+.idea/
+
+# Obsidian vault metadata (in case this folder is ever opened in Obsidian)
+.obsidian/
+.trash/
+
+# Sensitive / local-only material — keep real credentials & live configs out of git
+*.secret
+*.key
+secrets/
+**/startup-config-real.txt
+**/running-config-real.txt

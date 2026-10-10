@@ -1,0 +1,65 @@
+!==============================================================================
+! Device      : Cisco ASA 5520 Adaptive Security Appliance
+! Purpose     : Perimeter security baseline (interfaces, security levels,
+!               management access)
+!------------------------------------------------------------------------------
+! Lab reference configuration — CRAW Rack 1
+! NOTE: ASA syntax differs from IOS routers/switches. This is a minimal,
+!       illustrative baseline for the lab rack's firewall.
+!==============================================================================
+
+enable
+configure terminal
+
+hostname ASA1
+domain-name lab.local
+
+! --- Inside interface (trusted, high security level) ---
+interface GigabitEthernet0/1
+ nameif inside
+ security-level 100
+ ip address 10.0.0.254 255.0.0.0
+ no shutdown
+exit
+
+! --- Outside interface (untrusted, low security level) ---
+interface GigabitEthernet0/0
+ nameif outside
+ security-level 0
+ ip address 50.0.0.1 255.0.0.0
+ no shutdown
+exit
+
+! --- Default route toward the upstream gateway ---
+route outside 0.0.0.0 0.0.0.0 50.0.0.254 1
+
+! --- Allow inside hosts out with PAT (overload) ---
+object network INSIDE-NET
+ subnet 10.0.0.0 255.0.0.0
+ nat (inside,outside) dynamic interface
+exit
+
+! --- Permit ICMP return traffic for troubleshooting (inspect) ---
+policy-map global_policy
+ class inspection_default
+  inspect icmp
+exit
+
+! --- Secure management access (SSH to inside) ---
+username admin password StrongLabP@ss1 privilege 15
+aaa authentication ssh console LOCAL
+crypto key generate rsa modulus 2048
+ssh 10.0.0.0 255.0.0.0 inside
+ssh version 2
+
+end
+write memory
+
+!==============================================================================
+! Verification
+!   show interface ip brief
+!   show nameif
+!   show route
+!   show xlate            ! NAT translations
+!   show conn             ! active connections
+!==============================================================================

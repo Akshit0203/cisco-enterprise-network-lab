@@ -1,0 +1,38 @@
+!==============================================================================
+! Service     : DNS Name Resolution (Cisco IOS)
+! Device      : Router (Cisco 2811)
+! Purpose     : Resolve hostnames to IP addresses for easier management/testing
+!------------------------------------------------------------------------------
+! Lab reference configuration — CRAW Rack 1
+!==============================================================================
+
+enable
+configure terminal
+
+! --- Option A: use an external/local DNS server ---
+ip domain-lookup                    ! enable DNS resolution
+ip name-server 10.0.0.5             ! DNS server for the lab
+ip domain-name lab.local            ! default domain appended to short names
+
+! --- Option B: static host-to-IP mappings (no DNS server needed) ---
+! Lets you 'ping R2' instead of 'ping 20.0.0.2'
+ip host R1       10.0.0.2
+ip host R2       20.0.0.2
+ip host SW1      10.0.0.3
+ip host DNS      10.0.0.5
+ip host GW-LAN-C 30.0.0.1
+ip host GW-LAN-D 40.0.0.1
+
+end
+copy running-config startup-config
+
+!==============================================================================
+! Notes
+!   - 'no ip domain-lookup' is often set during config to avoid long waits
+!     when a command is mistyped; re-enable with 'ip domain-lookup' when DNS
+!     resolution is actually wanted.
+!
+! Verification
+!   show hosts                      ! host table + DNS config
+!   ping R2                         ! resolves via host table / DNS
+!==============================================================================

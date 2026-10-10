@@ -1,0 +1,62 @@
+!==============================================================================
+! Feature     : Secure Remote Access (SSH) + VTY hardening
+! Device      : Router / Switch (Cisco IOS)
+! Purpose     : Encrypted CLI management over the network; Telnet used only for
+!               reachability testing.
+!------------------------------------------------------------------------------
+! Lab reference configuration — CRAW Rack 1
+!==============================================================================
+
+enable
+configure terminal
+
+! --- Prerequisites for SSH: hostname + domain name (seed the RSA key name) ---
+hostname R1
+ip domain-name lab.local
+
+! --- Generate RSA key pair (1024+ bits required for SSH; 2048 recommended) ---
+crypto key generate rsa modulus 2048
+
+! --- Enforce SSH version 2 ---
+ip ssh version 2
+ip ssh time-out 60
+ip ssh authentication-retries 3
+
+! --- Local user for authentication (secret = hashed password) ---
+username admin privilege 15 secret StrongLabP@ss1
+
+! --- Protect privileged EXEC ---
+enable secret EnableLabP@ss1
+service password-encryption
+
+! --- VTY lines: allow SSH only, authenticate with local accounts ---
+line vty 0 4
+ login local
+ transport input ssh                ! SSH only (set 'ssh telnet' to also allow Telnet for testing)
+ exec-timeout 5 0
+exit
+
+! --- Optional: console protected with local login too ---
+line console 0
+ login local
+ exec-timeout 10 0
+exit
+
+! --- Legal banner ---
+banner motd ^
+  Authorized access only. Activity is logged and monitored.
+^
+
+end
+copy running-config startup-config
+
+!==============================================================================
+! Testing
+!   - From a client:   ssh -l admin 10.0.0.2
+!   - Telnet (reachability test only, cleartext):  telnet 10.0.0.2
+!
+! Verification
+!   show ip ssh                     ! SSH version and parameters
+!   show ssh                        ! active SSH sessions
+!   show users                      ! who is connected (con/vty)
+!==============================================================================
